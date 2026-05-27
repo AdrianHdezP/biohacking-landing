@@ -3,7 +3,7 @@ export const legalConfig = {
   ownerShortName: "Raquel",
   nif: "11835599Y",
   contactEmail: "contacto.biohacking.poker@gmail.com",
-  websiteUrl: "[https://www.tudominio.com]",
+  websiteUrl: "https://biohacking-landing.vercel.app/",
   websiteName: "Biohacking Póker",
   bookName: "Biohacking",
   lastUpdated: "27/05/2025",
