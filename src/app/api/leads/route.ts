@@ -10,6 +10,8 @@ type LeadRequestBody = {
   acceptedPrivacy?: boolean;
 };
 
+const SUPABASE_URL = "https://kehzsmjafngnyyfzlyed.supabase.co";
+
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
@@ -33,27 +35,8 @@ function getRequiredEnv(name: string) {
   return value.trim().replace(/^["']|["']$/g, "");
 }
 
-function validateUrl(value: string) {
-  try {
-    const url = new URL(value);
-
-    if (url.protocol !== "http:" && url.protocol !== "https:") {
-      throw new Error("La URL debe empezar por http:// o https://");
-    }
-
-    return value;
-  } catch {
-    throw new Error(
-      `NEXT_PUBLIC_SUPABASE_URL no es válida. Valor recibido: ${value}`
-    );
-  }
-}
-
 export async function POST(request: Request) {
   try {
-    const supabaseUrl = validateUrl(
-      getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL")
-    );
     const supabaseAnonKey = getRequiredEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY");
     const gmailUser = getRequiredEnv("GMAIL_SMTP_USER");
     const gmailAppPassword = getRequiredEnv("GMAIL_SMTP_APP_PASSWORD");
@@ -104,7 +87,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const supabase = createClient(SUPABASE_URL, supabaseAnonKey);
 
     const { error: supabaseError } = await supabase.from("book_leads").insert({
       name,
