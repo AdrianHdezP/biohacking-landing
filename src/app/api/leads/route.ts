@@ -30,12 +30,30 @@ function getRequiredEnv(name: string) {
     throw new Error(`Falta la variable de entorno: ${name}`);
   }
 
-  return value;
+  return value.trim().replace(/^["']|["']$/g, "");
+}
+
+function validateUrl(value: string) {
+  try {
+    const url = new URL(value);
+
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      throw new Error("La URL debe empezar por http:// o https://");
+    }
+
+    return value;
+  } catch {
+    throw new Error(
+      `NEXT_PUBLIC_SUPABASE_URL no es válida. Valor recibido: ${value}`
+    );
+  }
 }
 
 export async function POST(request: Request) {
   try {
-    const supabaseUrl = getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL");
+    const supabaseUrl = validateUrl(
+      getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL")
+    );
     const supabaseAnonKey = getRequiredEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY");
     const gmailUser = getRequiredEnv("GMAIL_SMTP_USER");
     const gmailAppPassword = getRequiredEnv("GMAIL_SMTP_APP_PASSWORD");
