@@ -179,7 +179,7 @@ El usuario ha aceptado la Política de Privacidad antes de enviar el formulario.
     return NextResponse.json(
       {
         message:
-          "Los datos se han guardado en Supabase, pero no se ha podido enviar el correo.",
+          "Los datos se han guardado en Supabase, pero Gmail ha rechazado el envío del correo. Revisa los logs de Vercel.",
       },
       { status: 500 }
     );
