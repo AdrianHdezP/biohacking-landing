@@ -25,6 +25,10 @@ type LeadFormValues = {
   message: string;
 };
 
+type ApiResponse = {
+  message?: string;
+};
+
 const initialFormValues: LeadFormValues = {
   name: "",
   email: "",
@@ -85,15 +89,32 @@ export function LeadForm() {
         }),
       });
 
-      const result = (await response.json()) as {
-        message?: string;
-      };
+      const contentType = response.headers.get("content-type");
+
+      let result: ApiResponse = {};
+
+      if (contentType?.includes("application/json")) {
+        result = (await response.json()) as ApiResponse;
+      } else {
+        const textResponse = await response.text();
+
+        console.error("Unexpected API response:", {
+          status: response.status,
+          body: textResponse,
+        });
+
+        setStatus("error");
+        setErrorMessage(
+          `La API ha respondido con un formato inesperado. Código: ${response.status}`
+        );
+        return;
+      }
 
       if (!response.ok) {
         setStatus("error");
         setErrorMessage(
           result.message ??
-            "No se ha podido enviar el formulario. Inténtalo de nuevo en unos minutos."
+            `No se ha podido enviar el formulario. Código: ${response.status}`
         );
         return;
       }
@@ -106,7 +127,7 @@ export function LeadForm() {
 
       setStatus("error");
       setErrorMessage(
-        "No se ha podido enviar el formulario. Revisa tu conexión e inténtalo de nuevo."
+        "No se ha podido conectar con la API del formulario. Revisa los logs de Vercel."
       );
     }
   }
